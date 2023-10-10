@@ -12,9 +12,10 @@ class FingerJurisdiction
 
 class UncomfortableKeystrokeResult
 {
-    constructor(numberOfUncomfortableKeystrokes, uncomfortableKeystrokes){
-        this.numberOfUncomfortableKeystrokes = numberOfUncomfortableKeystrokes;
-        this.uncomfortableKeystrokes = uncomfortableKeystrokes;
+    constructor(easeToType, numberOfDifficultKeystrokes, difficultKeystrokes){
+        this.easeToType = easeToType,
+        this.numberOfDifficultKeystrokes = numberOfDifficultKeystrokes;
+        this.difficultKeystrokes = difficultKeystrokes;
     }
 }
 
@@ -46,57 +47,91 @@ let jurisdictions = [
     new FingerJurisdiction("right", "thumb", [" "]),
 ];
 
-(() => {
-    calculateUncomfortable();
-})();
+function onChangeHandler() {
+  // Text input
+  let textInput = document.getElementById("floatingInput").value;
 
-function calculateUncomfortable(textInput = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") {
-    let previousJurisdiction = new FingerJurisdiction("", "", []);
-    let numberOfUncomfortableKeystrokes = 0;
-    let previousLetter = "";
-    let uncomfortableKeystrokes = "";
+  console.log("value is :" + textInput);
+  var uncomfortableKeystrokeResult = calculateUncomfortable(textInput);
 
-    // For every letter in testString.
-    for (let letterIndex = 0; letterIndex < textInput.length; letterIndex++) {
-        const letter = textInput[letterIndex];
+  displayResults(uncomfortableKeystrokeResult);
+}
 
-        // Boolean for whether we found the letter in any jurisdiction.
-        let foundJurisdiction = false;
+function displayResults(uncomfortableKeystrokeResult) {
 
-        // In every jurisdiction.
-        for (let jurisdictionIndex = 0; jurisdictionIndex < jurisdictions.length; jurisdictionIndex++) {
-            const jurisdiction = jurisdictions[jurisdictionIndex];
-            
-            // If the jurisdiction we are on contains the letter we are looking for.
-            if (jurisdiction.keys.includes(letter)) 
-            {
-                foundJurisdiction = true;
+  // Fields
+  let easeToType = document.getElementById("easeToType");
+  let numberOfDifficultKeystrokes = document.getElementById("numberOfDifficultKeystrokes");
+  let difficultKeystrokes = document.getElementById("difficultKeystrokes");
+  
+  console.log(uncomfortableKeystrokeResult);
 
-                // If the this is the same as the previous jurisdiction then this is an uncomfortable keystroke.
-                if (previousLetter == letter) {
-                    numberOfUncomfortableKeystrokes += 0.5;
-                }
-                else if (previousJurisdiction.hand == jurisdiction.hand && previousJurisdiction.finger == jurisdiction.finger) 
-                {
-                    numberOfUncomfortableKeystrokes++;
-                    uncomfortableKeystrokes += (previousLetter + " => " + letter + "\n");
-                }
+  easeToType.innerHTML = uncomfortableKeystrokeResult.easeToType == 1 ? "100%" : (uncomfortableKeystrokeResult.easeToType + "").slice(2, 4) + "%";
+  numberOfDifficultKeystrokes.innerHTML = uncomfortableKeystrokeResult.numberOfDifficultKeystrokes + "";
+  difficultKeystrokes.innerHTML = uncomfortableKeystrokeResult.difficultKeystrokes + "";
+}
 
-                previousJurisdiction = jurisdiction;
-                previousLetter = letter;
-                break;
-            }
+function calculateUncomfortable(textInput) {
+  // Variables.
+  let previousJurisdiction = new FingerJurisdiction("", "", []);
+  let numberOfUncomfortableKeystrokes = 0;
+  let previousLetter = "";
+  let uncomfortableKeystrokes = "";
+
+  // For every letter in testString.
+  for (let letterIndex = 0; letterIndex < textInput.length; letterIndex++) {
+    const letter = textInput[letterIndex];
+
+    // Boolean for whether we found the letter in any jurisdiction.
+    let foundJurisdiction = false;
+
+    // In every jurisdiction.
+    for (
+      let jurisdictionIndex = 0;
+      jurisdictionIndex < jurisdictions.length;
+      jurisdictionIndex++
+    ) {
+      const jurisdiction = jurisdictions[jurisdictionIndex];
+
+      // If the jurisdiction we are on contains the letter we are looking for.
+      if (jurisdiction.keys.includes(letter)) {
+        foundJurisdiction = true;
+
+        // If the this is the same as the previous jurisdiction then this is an uncomfortable keystroke.
+        if (previousLetter == letter) {
+          numberOfUncomfortableKeystrokes += 0.5;
+          uncomfortableKeystrokes += previousLetter + " => " + letter + "\n";
+        } else if (
+          previousJurisdiction.hand == jurisdiction.hand &&
+          previousJurisdiction.finger == jurisdiction.finger
+        ) {
+          numberOfUncomfortableKeystrokes++;
+          uncomfortableKeystrokes += previousLetter + " => " + letter + "\n";
         }
 
-        if (!foundJurisdiction) {
-            console.log("COULD NOT FIND LETTER " + letter);
-        }
-        
+        previousJurisdiction = jurisdiction;
+        previousLetter = letter;
+        break;
+      }
     }
 
-    console.log("Number of Uncomfortable Keystrokes: " + numberOfUncomfortableKeystrokes);
-    console.log("UncomfortableKeystrokes: \n" + uncomfortableKeystrokes);
+    if (!foundJurisdiction) {
+      console.log("COULD NOT FIND LETTER " + letter);
+    }
+  }
 
-    return new UncomfortableKeystrokeResult(numberOfUncomfortableKeystrokes, uncomfortableKeystrokes);
+  easeToType = 1 - (numberOfUncomfortableKeystrokes / (textInput.length - 1));
+  console.log(
+    "Number of Uncomfortable Keystrokes: " + numberOfUncomfortableKeystrokes
+  );
+  console.log("UncomfortableKeystrokes: \n" + uncomfortableKeystrokes);
+
+  var uncomfortableKeystrokeResult = (new UncomfortableKeystrokeResult(
+    easeToType,
+    numberOfUncomfortableKeystrokes,
+    uncomfortableKeystrokes
+  ));
+
+  return uncomfortableKeystrokeResult;
 }
 

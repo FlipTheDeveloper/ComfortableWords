@@ -29,6 +29,10 @@
         code {
             color: whitesmoke;
         }
+
+        label {
+            color: darkslategray;
+        }
     </style>
 </head>
 
@@ -70,17 +74,52 @@
             </div>
         </div>
     </nav>
+
+
     <main class="container">
-        Word To Assess: <input type="text" id="word">
+
+        <h1>What makes a word hard to type?</h1>
+        <p>There are some words that are easier to type than others. Some words are awful to type, like "lollipop". But other words such as "Gabriel" are really fun to type.</p>
+        <p>My theory is that if you have to move one finger to type subsequent keys in a word, the rest of your fingers need to wait for that one finger to move and press that key.</p>
+        <p>Since typing the same key twice can be kind of cumbersome, the application rates it as being half as hard as other shared jurisdiction key presses.</p>
+        <p>To display this theory, I wrote this javascript application to display how many times there are subsequent keys within a finger's "jurisdiction" on the keyboard. When you type in a sentence or word, and it finds keys typed that share the jurisdiction of the previously typed key. And rates the word on how hard it is to type.</p>
+        <p>Give it a shot!</p>
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="floatingInput" oninput="onChangeHandler()">
+            <label for="floatingInput">Type in a Word to Assess Its Comfortableness:</label>
+        </div>
+
         <div>
             <div class="row">
-                Comfort Rating: <span id="comfortRating"></span>
-                Uncomfotable Keystrokes: <span id="uncomfotableKeystrokes"></span>
-                Uncomfotable Keystrokes: <span id="uncomfotableKeystrokes"></span>
-            </div>q
+                <div class="col-3">
+                    Easiness to type:
+                </div>
+                <div class="col-9" id="easeToType">
+                    
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-3">
+                    Number of difficult keystrokes to type:
+                </div>
+                <div class="col-9" id="numberOfDifficultKeystrokes">
+                    
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-3">
+                    Difficult keystrokes
+                </div>
+                <div class="col-9" id="difficultKeystrokes">
+                    
+                </div>
+            </div>
         </div>
     </main><!-- Option 1: Bootstrap Bundle with Popper -->
-        <footer class="bg-dark text-light container-fluid py-3" >
+    
+    
+    
+    <footer class="bg-dark text-light container-fluid py-3 fixed-bottom" >
         <div class="row align-items-center">
             <div class="col-lg-7 align-self-center">
                 <!-- Email -->
